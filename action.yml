@@ -21,7 +21,7 @@ inputs:
     description: URL for Coverity Connect where the analysis tar file can be downloaded
     required: true
   cov_installation_dir:
-    description: Place where coveirty commands are found. Ex. /coverity/bin/. Not required if Coverity tools are in PATH.
+    description: Place where coverity commands are found. Ex. /coverity/bin/. Not required if Coverity tools are in PATH.
     required: false
   intermediate_dir:
     description: Itermediate directory
@@ -44,5 +44,5 @@ runs:
       shell: bash
     # Second step is to run the Python script
     - run: |
-        python3 commitChecker.py --coverity_home="${{inputs.cov_installation_dir}}" --coverity_url=${{inputs.cov_url}} --project_name=${{inputs.project}} --username=${{inputs.cov_username}} --password=${{inputs.cov_password}} --stream_name=${{inputs.stream}} --intermediate_dir=${{inputs.intermediate_dir}} --log_level=${{inputs.log_level}} --build_log_file=${{inputs.log_file}} ${{inputs.cov_params}}
+        python3 ${{github.action_path}}/commitChecker.py --coverity_home="${{inputs.cov_installation_dir}}" --coverity_url=${{inputs.cov_url}} --project_name=${{inputs.project}} --username=${{inputs.cov_username}} --password=${{inputs.cov_password}} --stream_name=${{inputs.stream}} --intermediate_dir=${{inputs.intermediate_dir}} --log_level=${{inputs.log_level}} --build_log_file=${{inputs.log_file}} ${{inputs.cov_params}}
       shell: bash
