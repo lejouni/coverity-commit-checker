@@ -1,0 +1,48 @@
+name: "Coverity Commit Checker"
+description: "Will check that is the commit needed or not"
+author: Jouni Lehto
+branding:
+  icon: code
+  color: blue
+inputs:
+  project:
+    description: Coverity Connect projet name
+    required: true
+  stream:
+    description: Coverity Connect projet stream name
+    required: true
+  cov_username:
+    description: Coverity Connect username
+    required: true
+  cov_password:
+    description: Coverity Connect password
+    required: true
+  cov_url:
+    description: URL for Coverity Connect where the analysis tar file can be downloaded
+    required: true
+  cov_installation_dir:
+    description: Place where coveirty commands are found. Ex. /coverity/bin/. Not required if Coverity tools are in PATH.
+    required: false
+  intermediate_dir:
+    description: Itermediate directory
+    required: true
+  log_level:
+    description: Logging level
+    default: DEBUG
+    required: false
+  log_file:
+    description: Log file name where emit percetage is checked (cov-build produces build-log.txt and cov-capture cov-capture-log.txt)
+    default: cov-capture-log.txt #or build-log.txt
+    required: false
+
+runs:
+  using: composite
+  steps:
+    # First step is to install needed Python modules
+    - run: |
+        pip3 install requests pymsteams
+      shell: bash
+    # Second step is to run the Python script
+    - run: |
+        python3 commitChecker.py --coverity_home="${{inputs.cov_installation_dir}}" --coverity_url=${{inputs.cov_url}} --project_name=${{inputs.project}} --username=${{inputs.cov_username}} --password=${{inputs.cov_password}} --stream_name=${{inputs.stream}} --intermediate_dir=${{inputs.intermediate_dir}} --log_level=${{inputs.log_level}} --build_log_file=${{inputs.log_file}} ${{inputs.cov_params}}
+      shell: bash
