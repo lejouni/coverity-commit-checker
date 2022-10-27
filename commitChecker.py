@@ -153,7 +153,7 @@ def checkEmitPrecentage():
                 if ("compilation units (" in line):
                     if(logging.getLogger().isEnabledFor(logging.DEBUG)):
                         logging.debug(f'Emit percentage was: {line[line.find("Emitted"):-1]}')
-                    if (int((line[line.find('(')+1:line.find('%)')])) < args.emit_threshold):
+                    if (int((line[line.find('(')+1:line.find('%)')])) < int(args.emit_threshold)):
                         return False, line[line.find('Emitted'):-1]
     else:
         logging.error(f"File: {fileWithPath} not found!")
@@ -231,7 +231,7 @@ if __name__ == '__main__':
     parser.add_argument('--check_emit', help='Is the emit percentage checked or not', default=True, type=str2bool)
     parser.add_argument('--dryrun', help='Is full commit wanted or not', default=False, type=str2bool)
     parser.add_argument('--break_build', help='Is breaking the build required', default=False, type=str2bool)
-    parser.add_argument('--emit_threshold', help='Emit percentage threshold limit default=95', default=95, type=int)
+    parser.add_argument('--emit_threshold', help='Emit percentage threshold limit default=95', default="95")
     parser.add_argument('--viewID', help="ID of that view which result is used to get findings.", default="", required=False)
     # #Teams configs
     parser.add_argument("--teams_webhook_url", help="This is the url for your Teams Incoming WebHook.", default="")

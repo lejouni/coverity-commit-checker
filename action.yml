@@ -1,15 +1,15 @@
 name: "Coverity Commit Checker"
-description: "Will check that is the commit needed or not"
+description: "Will check that is the commit needed or not and if it is, it will do it"
 author: Jouni Lehto
 branding:
   icon: code
   color: blue
 inputs:
   project:
-    description: Coverity Connect projet name
+    description: Coverity Connect project name
     required: true
   stream:
-    description: Coverity Connect projet stream name
+    description: Coverity Connect project stream name
     required: true
   cov_username:
     description: Coverity Connect username
@@ -31,8 +31,30 @@ inputs:
     default: DEBUG
     required: false
   log_file:
-    description: Log file name where emit percetage is checked (cov-build produces build-log.txt and cov-capture cov-capture-log.txt)
+    description: Log file name where emit percentage is checked (cov-build produces build-log.txt and cov-capture cov-capture-log.txt (default))
     default: cov-capture-log.txt #or build-log.txt
+    required: false
+  teams_webhook_url:
+    description: Microsoft Teams WebHook URL. By giving this, the Teams notification is activated
+    required: false
+  force_commit:
+    description: Setting this true, it will do the commit and will not do any checkings.
+    default: "false"
+    required: false
+  dryrun:
+    description: Set this true, if you want to run tests and not to do the commit.
+    default: "false"
+    required: false
+  break_build:
+    description: Set this true, if you want to break the build, if there are new findings.
+    default: "false"
+    required: false
+  emit_threshold:
+    description: With this you can set the emit threshold, the default is 95
+    default: '95'
+    required: false
+  viewID:
+    description: ID of that view which result is used to get findings
     required: false
 
 runs:
@@ -44,5 +66,5 @@ runs:
       shell: bash
     # Second step is to run the Python script
     - run: |
-        python3 ${{github.action_path}}/commitChecker.py --coverity_home="${{inputs.cov_installation_dir}}" --coverity_url=${{inputs.cov_url}} --project_name=${{inputs.project}} --username=${{inputs.cov_username}} --password=${{inputs.cov_password}} --stream_name=${{inputs.stream}} --intermediate_dir=${{inputs.intermediate_dir}} --log_level=${{inputs.log_level}} --build_log_file=${{inputs.log_file}} ${{inputs.cov_params}}
+        python3 ${{github.action_path}}/commitChecker.py --viewID=${{inputs.viewID}} --emit_threshold=${{inputs.emit_threshold}} --break_build=${{inputs.break_build}} --dryrun=${{inputs.dryrun}} --force_commit=${{inputs.force_commit}} --teams_webhook_url="${{inputs.teams_webhook_url}}" --coverity_home="${{inputs.cov_installation_dir}}" --coverity_url=${{inputs.cov_url}} --project_name=${{inputs.project}} --username=${{inputs.cov_username}} --password=${{inputs.cov_password}} --stream_name=${{inputs.stream}} --intermediate_dir=${{inputs.intermediate_dir}} --log_level=${{inputs.log_level}} --build_log_file=${{inputs.log_file}}
       shell: bash
