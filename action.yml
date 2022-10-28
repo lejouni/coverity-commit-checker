@@ -32,10 +32,6 @@ inputs:
     description: Logging level
     default: DEBUG
     required: false
-  log_file:
-    description: Log file name where emit percentage is checked (cov-build produces build-log.txt and cov-capture cov-capture-log.txt (default))
-    default: cov-capture-log.txt #or build-log.txt
-    required: false
   teams_webhook_url:
     description: Microsoft Teams WebHook URL. By giving this, the Teams notification is activated
     required: false
@@ -68,5 +64,5 @@ runs:
       shell: bash
     # Second step is to run the Python script
     - run: |
-        python3 ${{github.action_path}}/commitChecker.py --viewID=${{inputs.viewID}} --emit_threshold=${{inputs.emit_threshold}} --break_build=${{inputs.break_build}} --dryrun=${{inputs.dryrun}} --force_commit=${{inputs.force_commit}} --teams_webhook_url="${{inputs.teams_webhook_url}}" --coverity_home="${{inputs.cov_installation_dir}}" --coverity_url=${{inputs.cov_url}} --project_name=${{inputs.project}} --username=${{inputs.cov_username}} --password=${{inputs.cov_password}} --stream_name=${{inputs.stream}} --intermediate_dir=${{inputs.intermediate_dir}} --log_level=${{inputs.log_level}} --build_log_file=${{inputs.log_file}}
+        python3 ${{github.action_path}}/commitChecker.py --viewID=${{inputs.viewID}} --emit_threshold=${{inputs.emit_threshold}} --break_build=${{inputs.break_build}} --dryrun=${{inputs.dryrun}} --force_commit=${{inputs.force_commit}} --teams_webhook_url="${{inputs.teams_webhook_url}}" --coverity_home="${{inputs.cov_installation_dir}}" --coverity_url=${{inputs.cov_url}} --project_name=${{inputs.project}} --username=${{inputs.cov_username}} --password=${{inputs.cov_password}} --stream_name=${{inputs.stream}} --intermediate_dir=${{inputs.intermediate_dir}} --log_level=${{inputs.log_level}}
       shell: bash

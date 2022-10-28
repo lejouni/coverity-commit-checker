@@ -146,8 +146,10 @@ def checkFindings(analysisMergeKeys, snapshotMergeKeys):
 # and if the emit percentage is lower than given threshold.
 #
 def checkEmitPrecentage():
-    fileWithPath = abspath(args.intermediate_dir + os.path.sep + args.build_log_file)
-    if( exists(fileWithPath) ):
+    fileWithPath = abspath(args.intermediate_dir + os.path.sep + "build-log.txt")
+    if( not exists(fileWithPath) ):
+        fileWithPath = abspath(args.intermediate_dir + os.path.sep + "cov-capture-log.txt")
+    elif( exists(fileWithPath) ):
         with open(fileWithPath) as openfile:
             for line in openfile:
                 if ("compilation units (" in line):
@@ -156,8 +158,8 @@ def checkEmitPrecentage():
                     if (int((line[line.find('(')+1:line.find('%)')])) < int(args.emit_threshold)):
                         return False, line[line.find('Emitted'):-1]
     else:
-        logging.error(f"File: {fileWithPath} not found!")
-        return False, f"File: {fileWithPath} not found!"
+        logging.error(f"File: build-log.txt or cov-capture-log.txt not found!")
+        return False, f"File: build-log.txt or cov-capture-log.txt not found!"
     return True, f'was in the give threshold: {args.emit_threshold}'
 
 #
@@ -227,7 +229,6 @@ if __name__ == '__main__':
     parser.add_argument('--stream_name', help="Coverity stream name.", default="", required=True)
     parser.add_argument('--password', help='User password for Coverity', default="", required=True)
     parser.add_argument('--username', help='Username for Coverity', default="", required=True)
-    parser.add_argument('--build_log_file', help='Path for Coverity build log file from folder where this script is running', default="build-log.txt")
     parser.add_argument('--check_emit', help='Is the emit percentage checked or not', default=True, type=str2bool)
     parser.add_argument('--dryrun', help='Is full commit wanted or not', default=False, type=str2bool)
     parser.add_argument('--break_build', help='Is breaking the build required', default=False, type=str2bool)
