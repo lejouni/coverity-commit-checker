@@ -6,13 +6,13 @@ branding:
   color: blue
 inputs:
   project:
-    description: Coverity Connect project name. If not given, then using github.repository as a default
+    description: Coverity Connect project name. If not given, then using env.project as a default
     required: false
-    default: ${{github.repository}}
+    default: ${{env.project}}
   stream:
-    description: Coverity Connect project stream name. If not given, then using github.ref_name as a default
+    description: Coverity Connect project stream name. If not given, then using env.stream as a default
     required: false
-    default: ${{github.ref_name}}
+    default: ${{env.project}}
   cov_username:
     description: Coverity Connect username
     required: true
