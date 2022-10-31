@@ -250,6 +250,8 @@ if __name__ == '__main__':
     #Printing out the version number
     logging.info("CommitChecker version: " + __versionro__)
     fixedIssueMergeKeys,newIssueMergeKeys = [],[]
+    #Testing coverity_home has ending / 
+    if args.coverity_home and not args.coverity_home.endswith('/'): args.coverity_home = args.coverity_home + "/"
     if not args.force_commit:
         # Check first that is the emit percentage within given threshold, if not will exit.
         if args.check_emit:
