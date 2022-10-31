@@ -22,7 +22,7 @@ inputs:
   cov_url:
     description: URL for Coverity Connect where the analysis tar file can be downloaded
     required: true
-  cov_installation_dir:
+  cov_install_folder:
     description: Place where coverity commands are found. Ex. /coverity/bin/. Not required if Coverity tools are in PATH.
     required: false
   intermediate_dir:
@@ -64,5 +64,5 @@ runs:
       shell: bash
     # Second step is to run the Python script
     - run: |
-        python3 ${{github.action_path}}/commitChecker.py --viewID=${{inputs.viewID}} --emit_threshold=${{inputs.emit_threshold}} --break_build=${{inputs.break_build}} --dryrun=${{inputs.dryrun}} --force_commit=${{inputs.force_commit}} --teams_webhook_url="${{inputs.teams_webhook_url}}" --coverity_home="${{inputs.cov_installation_dir}}" --coverity_url=${{inputs.cov_url}} --project_name=${{inputs.project}} --username=${{inputs.cov_username}} --password=${{inputs.cov_password}} --stream_name=${{inputs.stream}} --intermediate_dir=${{inputs.intermediate_dir}} --log_level=${{inputs.log_level}}
+        python3 ${{github.action_path}}/commitChecker.py --viewID=${{inputs.viewID}} --emit_threshold=${{inputs.emit_threshold}} --break_build=${{inputs.break_build}} --dryrun=${{inputs.dryrun}} --force_commit=${{inputs.force_commit}} --teams_webhook_url="${{inputs.teams_webhook_url}}" --coverity_home="${{inputs.cov_install_folder}}" --coverity_url=${{inputs.cov_url}} --project_name=${{inputs.project}} --username=${{inputs.cov_username}} --password=${{inputs.cov_password}} --stream_name=${{inputs.stream}} --intermediate_dir=${{inputs.intermediate_dir}} --log_level=${{inputs.log_level}}
       shell: bash
