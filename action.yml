@@ -8,11 +8,11 @@ inputs:
   project:
     description: Coverity Connect project name. If not given, then using project from environment variables as a default
     required: false
-    default: ${{env.project}}
+    default: ${{github.env.project}}
   stream:
     description: Coverity Connect project stream name. If not given, then using stream from environment variables as a default
     required: false
-    default: ${{env.project}}
+    default: ${{github.env.project}}
   cov_username:
     description: Coverity Connect username
     required: true
