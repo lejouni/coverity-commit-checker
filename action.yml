@@ -6,11 +6,11 @@ branding:
   color: blue
 inputs:
   project:
-    description: Coverity Connect project name. If not given, then using env.project as a default
+    description: Coverity Connect project name. If not given, then using project from environment variables as a default
     required: false
     default: ${{env.project}}
   stream:
-    description: Coverity Connect project stream name. If not given, then using env.stream as a default
+    description: Coverity Connect project stream name. If not given, then using stream from environment variables as a default
     required: false
     default: ${{env.project}}
   cov_username:
