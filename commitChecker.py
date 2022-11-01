@@ -34,9 +34,11 @@ def getLatestComparableSnapshotIDByStream(streamName):
         r = requests.get(args.coverity_url + endpoint + params, headers=headers, auth=(args.username, args.password))
         if( r.status_code == 200 ):
             data = json.loads(r.content)
-            if(logging.getLogger().isEnabledFor(logging.DEBUG)):
-                logging.debug(f'Latest snapshotID for stream {streamName} is {data["snapshotsForStream"][0]["id"]}')
-            return data['snapshotsForStream'][0]['id']
+            if len(data["snapshotsForStream"]) > 0:
+                logging.info(data)
+                if(logging.getLogger().isEnabledFor(logging.DEBUG)):
+                    logging.debug(f'Latest snapshotID for stream {streamName} is {data["snapshotsForStream"][0]["id"]}')
+                return data['snapshotsForStream'][0]['id']
         else:
             logging.error(f'Coverity API endpoint (/api/v2/streams/stream/snapshots) request failed with error code: {r.status_code}')
 
@@ -66,6 +68,8 @@ def getFindingsBySnapshotID(snapshotID, project_name):
             return mergeKeys
         else:
             logging.error(f'FindingsBySnapshotID failed: {json.dumps(r, indent=3)}')
+    else:
+        return []
 
 #
 # Get the findings based on give viewID. Use Coverity API endpoint (/api/v2/views/viewContents/).
