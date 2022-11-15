@@ -9,7 +9,7 @@ Will check is Coverity commit needed by using Coverity Connect REST API. This ac
 | cov_username | Coverity Connect username | - | true |
 | cov_password | Coverity Connect password | - | true |
 | cov_url | URL for Coverity Connect | - | true |
-| cov_install_folder | To which folder the Coverity tools are extracted | /tmp/cache/coverity | false |
+| cov_install_folder | Where Coverity tools are installed. If not given, then expects tools to be in runner PATH | - | false |
 | intermediate_dir | Intermediate directory | - | true |
 | log_level | Logging level | DEBUG | false |
 | teams_webhook_url | Microsoft Teams WebHook URL. By giving this, the Teams notification is activated | - | false |
@@ -24,7 +24,7 @@ Will check is Coverity commit needed by using Coverity Connect REST API. This ac
 **Example usage**
 ```yaml
     - name: Coverity Commit phase
-      uses: lejouni/coverity-commit-checker@v5.6.2
+      uses: lejouni/coverity-commit-checker@v5.6.3
       with:
         project: test-project
         stream: test-project-main
