@@ -12,7 +12,7 @@ inputs:
   stream:
     description: Coverity Connect project stream name. If not given, then using stream from environment variables as a default
     required: false
-    default: ${{github.env.project}}
+    default: ${{github.env.stream}}
   cov_username:
     description: Coverity Connect username
     required: true
@@ -20,7 +20,7 @@ inputs:
     description: Coverity Connect password
     required: true
   cov_url:
-    description: URL for Coverity Connect where the analysis tar file can be downloaded
+    description: URL for Coverity Connect
     required: true
   cov_install_folder:
     description: Place where coverity commands are found. Ex. /coverity/bin/. Not required if Coverity tools are in PATH.
@@ -37,19 +37,19 @@ inputs:
     required: false
   force_commit:
     description: Setting this true, it will do the commit and will not do any checkings.
-    default: "false"
+    default: false
     required: false
   dryrun:
     description: Set this true, if you want to run tests and not to do the commit.
-    default: "false"
+    default: false
     required: false
   break_build:
     description: Set this true, if you want to break the build, if there are new findings.
-    default: "false"
+    default: false
     required: false
   emit_threshold:
     description: With this you can set the emit threshold, the default is 95
-    default: '95'
+    default: 95
     required: false
   viewID:
     description: ID of that view which result is used to get findings

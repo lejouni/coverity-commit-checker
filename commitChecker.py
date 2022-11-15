@@ -74,6 +74,8 @@ def getFindingsBySnapshotID(snapshotID, project_name):
 #
 # Get the findings based on give viewID. Use Coverity API endpoint (/api/v2/views/viewContents/).
 #
+# NOTE: The used view must contain the column "Merge Key"
+#
 def getFindingsByView(projectID):
     headers = {'Accept': 'application/json'}
     endpoint = f'/api/v2/views/viewContents/{args.viewID}?projectId={projectID}&rowCount=-1&offset=0&sortKey=mergeKey&sortOrder=desc&locale=en_us'
@@ -85,6 +87,30 @@ def getFindingsByView(projectID):
             for key in issue:
                 if key['key'] == 'mergeKey': mergeKeys.append(key['value'])
         return mergeKeys
+    return []
+
+#
+# Get the findings based on give viewID. Use Coverity API endpoint (/api/viewContents/issues/v1/).
+# For older Coverity Connect versions which don't support newer Coverity API endpoint (/api/v2/views/viewContents/)
+#
+# NOTE: The used view must contain the column "Merge Key"
+#
+def getFindingsByOldView(projectID):
+    #Send the REST API request
+    endpoint = f'/api/viewContents/issues/v1/{args.viewID}?projectId={projectID}'
+    logging.debug("Calling Coverity endpoint: " + endpoint)
+    headers = {'Accept': 'application/json'}
+    r = requests.get(args.coverity_url + endpoint, headers=headers, auth=(args.username, args.password))
+    logging.debug("Status code for response was: {}".format(r.status_code))
+    #If everything went ok == status code 200
+    if( r.status_code == 200 ):
+        data = json.loads(r.content)
+        viewContentsV1_data = data['viewContentsV1']
+        mergeKeys = []
+        for issue in viewContentsV1_data['rows']:
+            mergeKeys.append(issue['mergeKey'])
+        return mergeKeys
+    return []
 
 #
 # Get proejct name for the given stream. Use Coverity API endpoint (/api/v2/streams/).
@@ -117,12 +143,12 @@ def getProjectID(project_name):
         raise SystemExit(f'No projectID found for project {project_name}, error: {r.content}')
 
 #
-# Will create an JSON output file with Coverity command cov-format-errors and using flag --json-output-v10 and will remove the file
+# Will create an JSON output file with Coverity command cov-format-errors and using flag --json-output-v9 and will remove the file
 # in the end of method call. This will return all the mergeKeys what the current analysis has found and are in given intermediate directory.
 #
 def getAnalysisMergeKeys():
     previewFileName = f"{args.intermediate_dir}{os.path.sep}coverity_analysis_results.json"
-    exportCommand = f"{args.coverity_home}cov-format-errors --dir {args.intermediate_dir} --json-output-v10 {previewFileName}"
+    exportCommand = f"{args.coverity_home}cov-format-errors --dir {args.intermediate_dir} --json-output-v9 {previewFileName}"
     os.system(exportCommand)
     if ( exists(previewFileName) ):
         previewData = json.load(open(previewFileName, "r"))
@@ -271,7 +297,7 @@ if __name__ == '__main__':
         if args.viewID:
             projectID = getProjectID(project_name)
             if projectID:
-                fixedIssueMergeKeys,newIssueMergeKeys = checkFindings(getAnalysisMergeKeys(), getFindingsByView(projectID))    
+                fixedIssueMergeKeys,newIssueMergeKeys = checkFindings(getAnalysisMergeKeys(), getFindingsByOldView(projectID))    
         else:
             fixedIssueMergeKeys,newIssueMergeKeys = checkFindings(getAnalysisMergeKeys(), getFindingsBySnapshotID(getLatestComparableSnapshotIDByStream(args.stream_name), project_name))
         if len(fixedIssueMergeKeys) > 0: 
