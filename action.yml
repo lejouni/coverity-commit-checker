@@ -7,12 +7,10 @@ branding:
 inputs:
   project:
     description: Coverity Connect project name. If not given, then using project from environment variables as a default
-    required: false
-    default: ${{github.env.project}}
+    required: true
   stream:
     description: Coverity Connect project stream name. If not given, then using stream from environment variables as a default
-    required: false
-    default: ${{github.env.stream}}
+    required: true
   cov_username:
     description: Coverity Connect username
     required: true

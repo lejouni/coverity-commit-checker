@@ -4,8 +4,8 @@ Will check is Coverity commit needed by using Coverity Connect REST API. This ac
 ## Available Options
 | Option name | Description | Default value | Required |
 |----------|----------|---------|----------|
-| project | Project name in Coverity Connect | ${{github.env.project}} | false |
-| stream | Project stream name in Coverity Connect | ${{github.env.stream}} | false |
+| project | Project name in Coverity Connect | - | true |
+| stream | Project stream name in Coverity Connect | - | true |
 | cov_username | Coverity Connect username | - | true |
 | cov_password | Coverity Connect password | - | true |
 | cov_url | URL for Coverity Connect | - | true |
