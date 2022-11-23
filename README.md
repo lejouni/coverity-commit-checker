@@ -24,7 +24,7 @@ Will check is Coverity commit needed by using Coverity Connect REST API. This ac
 **Example usage**
 ```yaml
     - name: Coverity Commit phase
-      uses: lejouni/coverity-commit-checker@v5.6.4
+      uses: lejouni/coverity-commit-checker@v5.6.5
       with:
         project: test-project
         stream: test-project-main
