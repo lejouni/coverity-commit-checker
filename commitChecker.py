@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Script for helping Coverity usage in CI/CD tools.
 #
@@ -10,12 +9,11 @@ import pymsteams
 from os.path import abspath, exists
 import os
 import sys
-import datetime
 from timeit import default_timer as timer
 
 
 __author__ = "Jouni Lehto"
-__versionro__="0.0.2"
+__versionro__="0.0.3"
 
 #Global variables
 args = ""
@@ -28,17 +26,21 @@ def getLatestComparableSnapshotIDByStream(streamName):
     if streamName:
         headers = {'Accept': 'application/json'}
         endpoint = '/api/v2/streams/stream/snapshots'
-        currentDate = datetime.datetime.now() + datetime.timedelta(days=1)
-        params = f'?idType=byName&name={streamName}&hasSummaries=true&lastBeforeCodeVersionDate={currentDate.year}-{currentDate.month}-{currentDate.day}&locale=en_us'
+        params = f'?idType=byName&name={streamName}&hasSummaries=true&locale=en_us'
         logging.debug(args.coverity_url + endpoint + params)
         r = requests.get(args.coverity_url + endpoint + params, headers=headers, auth=(args.username, args.password))
         if( r.status_code == 200 ):
             data = json.loads(r.content)
+            snapshots = []
             if len(data["snapshotsForStream"]) > 0:
-                logging.info(data)
+                for snapshot in data["snapshotsForStream"]:
+                    snapshots.append(snapshot["id"])
+                snapshotID = max(snapshots)
                 if(logging.getLogger().isEnabledFor(logging.DEBUG)):
-                    logging.debug(f'Latest snapshotID for stream {streamName} is {data["snapshotsForStream"][0]["id"]}')
-                return data['snapshotsForStream'][0]['id']
+                    logging.debug(f'Stream: {streamName} has {len(snapshots)} streams and the latest snapshotID is {snapshotID}')
+                return snapshotID
+            else:
+                logging.info(f'Stream: {streamName} has 0 streams.')
         else:
             logging.error(f'Coverity API endpoint (/api/v2/streams/stream/snapshots) request failed with error code: {r.status_code}')
 
@@ -208,10 +210,13 @@ def breakBuild(newFindings):
 def executeCoverityCommit():
     if not args.dryrun:
         if logging.getLogger().isEnabledFor(logging.DEBUG):
-            logging.debug("--dryrun=False -> will run the commit!")
-        os.system(f'{args.coverity_home}cov-commit-defects --dir="{args.intermediate_dir}" --url="{args.coverity_url}" --user="{args.username}" --password="{args.password}" --stream="{args.stream_name}"')
+            logging.debug("--dryrun not given -> will run the commit!")
+        if args.scm:
+            os.system(f'{args.coverity_home}cov-commit-defects --dir="{args.intermediate_dir}" --scm="{args.scm}" --url="{args.coverity_url}" --user="{args.username}" --password="{args.password}" --stream="{args.stream_name}"')
+        else:
+            os.system(f'{args.coverity_home}cov-commit-defects --dir="{args.intermediate_dir}" --url="{args.coverity_url}" --user="{args.username}" --password="{args.password}" --stream="{args.stream_name}"')
     elif(logging.getLogger().isEnabledFor(logging.DEBUG)):
-        logging.debug("--dryrun=True -> no commit done!")
+        logging.debug("--dryrun is given -> no commit done!")
 
 #
 # This method is sending the Teams notification only, if there are any new findings or emit percentage is too low.
@@ -271,6 +276,7 @@ if __name__ == '__main__':
     parser.add_argument('--intermediate_dir', help="Intermediate directory", default="idir")
     parser.add_argument('--coverity_home', help="Folder where coverity commandfiles are located. Example: /coverity/bin/", default="")
     parser.add_argument('--force_commit', help="Force commit, will skip all other checks", default=False, type=str2bool)
+    parser.add_argument('--scm', help="Specifies the name of the source control management system. (Options: ads, clearcase, cvs, git, hg, perforce, svn, tfs, plastic or plastic-distributed", default="")
     
     args = parser.parse_args()
     #Initializing the logger
